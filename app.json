@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "nativeTwitterClone",
+    "slug": "nativeTwitterClone",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "nativeTwitterClone"
+}
