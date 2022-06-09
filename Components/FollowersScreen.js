@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { supabase } from "../supabaseClient";
 import ProfilePicture from "./ProfilePicture";
+import { AuthContext } from "./Context";
 import debounce from "lodash.debounce";
 
 const FollowersPanel = ({ follower }) => {
@@ -35,7 +36,8 @@ const FollowersPanel = ({ follower }) => {
 };
 
 export default function FollowersScreen({ navigation }) {
-  const [followers, setFollowers] = useState(null);
+  const { followers, getFollowers } = React.useContext(AuthContext);
+  // const [followers, setFollowers] = useState(null);
   const [searchProfiles, setSearchProfiles] = useState("");
   const [loading, setLoading] = useState(false);
   const [filteredProfiles, setFilteredProfiles] = useState([]);
@@ -69,29 +71,6 @@ export default function FollowersScreen({ navigation }) {
       alert(error.message);
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function getFollowers() {
-    const session = supabase.auth.session();
-    if (!session) return;
-    const user = supabase.auth.user();
-
-    try {
-      const { data, error } = await supabase
-        .from("Followers")
-        .select("*, profiles:followedUser (*)")
-        .eq("followedBy", user.id);
-
-      if (error) {
-        throw error;
-      }
-
-      if (data.length !== 0) {
-        setFollowers(data);
-      }
-    } catch (error) {
-      alert(error.message);
     }
   }
 

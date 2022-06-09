@@ -8,20 +8,20 @@ import ProfilePicture from "./ProfilePicture";
 export default function SettingsScreen({ navigation }) {
   const { session, setSession } = React.useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState(null);
-  const [website, setWebsite] = useState(null);
-  const [avatar_url, setAvatarUrl] = useState(null);
-  const [about_me, setAboutMe] = useState(null);
-  const [profile_tag, setPorifleTag] = useState(null);
-  const [id, setId] = useState(null);
+  const [username, setUsername] = useState("");
+  const [website, setWebsite] = useState("");
+  const [avatar_url, setAvatarUrl] = useState("");
+  const [about_me, setAboutMe] = useState("");
+  const [profile_tag, setPorifleTag] = useState("");
+  const [id, setId] = useState("");
   const user = supabase.auth.user();
 
   useEffect(() => {
     getProfile();
-  }, [session]);
+  }, []);
 
   async function getProfile() {
-    if (!session) return;
+    // if (!session) return;
     try {
       setLoading(true);
 
@@ -88,7 +88,6 @@ export default function SettingsScreen({ navigation }) {
         width={"7rem"}
         onUpload={(url) => {
           setAvatarUrl(url);
-          updateProfile({ username, website, avatar_url: url });
         }}
       />
       <Text style={{ fontSize: "0.6rem" }}>@{profile_tag}</Text>
