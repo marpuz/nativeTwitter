@@ -8,10 +8,10 @@ import { AuthContext } from "./Context";
 export default function ProfileView({ route, navigation }) {
   const user = supabase.auth.user();
   const id = route.params.profile.user_id;
-  const [website, setWebsite] = useState(null);
-  const [avatar_url, setAvatarUrl] = useState(null);
-  const [about_me, setAboutMe] = useState(null);
-  const [username, setUserName] = useState(null);
+  const [website, setWebsite] = useState("");
+  const [avatar_url, setAvatarUrl] = useState("");
+  const [about_me, setAboutMe] = useState("");
+  const [username, setUserName] = useState("");
   const [usersProfile, setUserProfile] = useState(false);
   const [followers, setFollowers] = useState(false);
   const [posts, setPosts] = useState(null);
@@ -110,10 +110,11 @@ export default function ProfileView({ route, navigation }) {
 
       if (data) {
         setFollowers(true);
-        getFollowers();
       }
     } catch (error) {
       alert(error.message);
+    } finally {
+      getFollowers();
     }
   }
 
@@ -130,10 +131,11 @@ export default function ProfileView({ route, navigation }) {
 
       if (data) {
         setFollowers(false);
-        getFollowers();
       }
     } catch (error) {
       alert(error.message);
+    } finally {
+      getFollowers();
     }
   }
   return (

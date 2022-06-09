@@ -7,6 +7,18 @@ export const AuthContextProvider = (props) => {
   const [session, setSession] = React.useState(null);
   const [followers, setFollowers] = React.useState(null);
 
+  React.useEffect(() => {
+    setSession(supabase.auth.session());
+  });
+
+  React.useEffect(() => {
+    getFollowers();
+  }, []);
+
+  React.useEffect(() => {
+    getFollowers();
+  }, [session]);
+
   async function getFollowers() {
     const user = supabase.auth.user();
     const currentsession = supabase.auth.session();
@@ -21,7 +33,7 @@ export const AuthContextProvider = (props) => {
         throw error;
       }
 
-      if (data.length !== 0) {
+      if (data) {
         setFollowers(data);
       }
     } catch (error) {
