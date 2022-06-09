@@ -12,12 +12,31 @@ import FollowersScreen from "./FollowersScreen";
 import SettingsScreen from "./SettingsScreen";
 import SignIn from "./SignIn";
 import CreateAccount from "./CreateAccount";
+import ProfileView from "./ProfileView";
+import ProfileVieww from "./ProfileVieww";
 
 //Screen names
 const homeName = "Home";
 const followersName = "Followers";
 const settingsName = "Settings";
+const profileName = "ProfileView";
 const Tab = createBottomTabNavigator();
+
+const HomeStack = createStackNavigator();
+const HomeStackScreen = () => (
+  <HomeStack.Navigator headerMode={false}>
+    <HomeStack.Screen name="Home" component={HomeScreen} />
+    <HomeStack.Screen name="ProfileView" component={ProfileView} />
+  </HomeStack.Navigator>
+);
+
+const FollowersStack = createStackNavigator();
+const FollowersStackScreen = () => (
+  <FollowersStack.Navigator headerMode={false}>
+    <FollowersStack.Screen name="Followers" component={FollowersScreen} />
+    <FollowersStack.Screen name="ProfileView" component={ProfileVieww} />
+  </FollowersStack.Navigator>
+);
 
 const AuthStack = createStackNavigator();
 const AuthStackScreen = () => (
@@ -50,14 +69,20 @@ const MainAppScreen = () => (
         } else if (rn === settingsName) {
           iconName = focused ? "settings" : "settings-outline";
         }
-
-        // You can return any component that you like here!
         return <Ionicons name={iconName} size={size} color={color} />;
       },
     })}
   >
-    <Tab.Screen name={homeName} component={HomeScreen} />
-    <Tab.Screen name={followersName} component={FollowersScreen} />
+    <Tab.Screen
+      name={homeName}
+      component={HomeStackScreen}
+      options={{ headerShown: false }}
+    />
+    <Tab.Screen
+      name={followersName}
+      component={FollowersStackScreen}
+      options={{ headerShown: false }}
+    />
     <Tab.Screen name={settingsName} component={SettingsScreen} />
   </Tab.Navigator>
 );
@@ -87,5 +112,3 @@ export default function MainContainer() {
     </NavigationContainer>
   );
 }
-
-// export default MainContainer;

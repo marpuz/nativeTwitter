@@ -29,24 +29,48 @@ export default function SignIn({ navigation }) {
       setSession(supabase.auth.session());
     }
   };
+  const goToRegister = () => {
+    navigation.navigate("CreateAccount");
+  };
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Sign in</Text>
+      <Text style={{ fontSize: "3rem" }}>Sign in</Text>
       <TextInput
-        style={styles.input}
+        style={{
+          border: "1px solid gray",
+          padding: "0.5rem",
+          borderRadius: "16px",
+          textAlign: "center",
+          fontSize: "1rem",
+          height: "2rem",
+          width: "40%",
+          margin: "0.5rem",
+        }}
         autoCorrect={false}
         autoCapitalize="none"
+        placeholder={"Email"}
         keyboardType="email-address"
         onChangeText={(text) => setEmail(text)}
         value={email}
       />
 
       <TextInput
-        style={styles.input}
+        style={{
+          border: "1px solid gray",
+          padding: "0.5rem",
+          borderRadius: "16px",
+          textAlign: "center",
+          fontSize: "1rem",
+          height: "2rem",
+          width: "40%",
+          margin: "0.5rem",
+        }}
         autoCorrect={false}
         autoCapitalize="none"
         onChangeText={(pswrd) => setPassword(pswrd)}
+        secureTextEntry={true}
+        placeholder={"Password"}
         value={password}
       />
       <Button
@@ -58,18 +82,14 @@ export default function SignIn({ navigation }) {
         color="#841584"
         accessibilityLabel="Sign in"
       />
-      <Text>{email}</Text>
-      <Text>{password}</Text>
-      <Text>{session !== null ? "asd" : "asdfe"}</Text>
+      <Button
+        onPress={() => {
+          goToRegister();
+        }}
+        title="Go to register page!"
+        color="#841584"
+        accessibilityLabel="Sign in"
+      />
     </View>
   );
 }
-const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    width: 160,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-});
