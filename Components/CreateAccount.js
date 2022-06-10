@@ -78,17 +78,20 @@ const CreateAccount = () => {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={{ fontSize: "3rem" }}>Sign up</Text>
+      <Text style={{ fontSize: 48 }}>Sign up</Text>
       <TextInput
         style={{
-          border: "1px solid gray",
-          padding: "0.5rem",
-          borderRadius: "16px",
+          borderColor: "#841584",
+          borderStyle: "solid",
+          borderLeftWidth: 4,
+          borderRightWidth: 4,
+          padding: 8,
+          borderRadius: 16,
           textAlign: "center",
-          fontSize: "1rem",
-          height: "2rem",
+          fontSize: 16,
+          height: 32,
           width: "40%",
-          margin: "0.5rem",
+          margin: 8,
         }}
         autoCorrect={false}
         autoCapitalize="none"
@@ -100,14 +103,17 @@ const CreateAccount = () => {
 
       <TextInput
         style={{
-          border: "1px solid gray",
-          padding: "0.5rem",
-          borderRadius: "16px",
+          borderColor: "#841584",
+          borderStyle: "solid",
+          borderLeftWidth: 4,
+          borderRightWidth: 4,
+          padding: 8,
+          borderRadius: 16,
           textAlign: "center",
-          fontSize: "1rem",
-          height: "2rem",
+          fontSize: 16,
+          height: 32,
           width: "40%",
-          margin: "0.5rem",
+          margin: 8,
         }}
         autoCorrect={false}
         autoCapitalize="none"

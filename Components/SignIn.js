@@ -1,7 +1,6 @@
 import * as React from "react";
 import { View, Text, TextInput, StyleSheet, Button } from "react-native";
 import { supabase } from "../supabaseClient";
-import { useAuthContext } from "./context";
 import { AuthContext } from "./Context";
 
 export default function SignIn({ navigation }) {
@@ -35,17 +34,20 @@ export default function SignIn({ navigation }) {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={{ fontSize: "3rem" }}>Sign in</Text>
+      <Text style={{ fontSize: 48 }}>Sign in</Text>
       <TextInput
         style={{
-          border: "1px solid gray",
-          padding: "0.5rem",
-          borderRadius: "16px",
+          borderColor: "#841584",
+          borderStyle: "solid",
+          borderLeftWidth: 4,
+          borderRightWidth: 4,
+          padding: 8,
+          borderRadius: 16,
           textAlign: "center",
-          fontSize: "1rem",
-          height: "2rem",
-          width: "40%",
-          margin: "0.5rem",
+          fontSize: 16,
+          height: 32,
+          width: "60%",
+          margin: 8,
         }}
         autoCorrect={false}
         autoCapitalize="none"
@@ -57,14 +59,17 @@ export default function SignIn({ navigation }) {
 
       <TextInput
         style={{
-          border: "1px solid gray",
-          padding: "0.5rem",
-          borderRadius: "16px",
+          borderColor: "#841584",
+          borderStyle: "solid",
+          borderLeftWidth: 4,
+          borderRightWidth: 4,
+          padding: 8,
+          borderRadius: 16,
           textAlign: "center",
-          fontSize: "1rem",
-          height: "2rem",
-          width: "40%",
-          margin: "0.5rem",
+          fontSize: 16,
+          height: 32,
+          width: "60%",
+          margin: 8,
         }}
         autoCorrect={false}
         autoCapitalize="none"

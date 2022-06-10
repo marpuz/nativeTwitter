@@ -24,7 +24,8 @@ const Tab = createBottomTabNavigator();
 
 const HomeStack = createStackNavigator();
 const HomeStackScreen = () => (
-  <HomeStack.Navigator headerMode={false}>
+  //screenOptions={{ headerShown: false }}
+  <HomeStack.Navigator>
     <HomeStack.Screen name="Home" component={HomeScreen} />
     <HomeStack.Screen name="ProfileView" component={ProfileView} />
   </HomeStack.Navigator>
@@ -32,7 +33,8 @@ const HomeStackScreen = () => (
 
 const FollowersStack = createStackNavigator();
 const FollowersStackScreen = () => (
-  <FollowersStack.Navigator headerMode={false}>
+  //screenOptions={{ headerShown: false }}
+  <FollowersStack.Navigator>
     <FollowersStack.Screen name="Followers" component={FollowersScreen} />
     <FollowersStack.Screen name="ProfileView" component={ProfileVieww} />
   </FollowersStack.Navigator>
@@ -89,11 +91,19 @@ const MainAppScreen = () => (
 
 const RootStack = createStackNavigator();
 const RootStackScreen = ({ userToken }) => (
-  <RootStack.Navigator headerMode="none">
+  <RootStack.Navigator screenOptions={{ headerShown: false }}>
     {userToken ? (
-      <RootStack.Screen name="App" component={MainAppScreen} />
+      <RootStack.Screen
+        name="Main"
+        component={MainAppScreen}
+        screenOptions={{ headerShown: false }}
+      />
     ) : (
-      <RootStack.Screen name="Auth" component={AuthStackScreen} />
+      <RootStack.Screen
+        name="Auth"
+        component={AuthStackScreen}
+        screenOptions={{ headerShown: false }}
+      />
     )}
   </RootStack.Navigator>
 );

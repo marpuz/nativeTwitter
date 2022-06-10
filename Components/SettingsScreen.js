@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, TextInput, Button } from "react-native";
 import { supabase } from "../supabaseClient";
 import { AuthContext } from "./Context";
 import ProfilePicture from "./ProfilePicture";
@@ -13,12 +13,13 @@ export default function SettingsScreen({ navigation }) {
   const [avatar_url, setAvatarUrl] = useState("");
   const [about_me, setAboutMe] = useState("");
   const [profile_tag, setPorifleTag] = useState("");
+  const [refresh, setRefresh] = useState(0);
   const [id, setId] = useState("");
   const user = supabase.auth.user();
 
   useEffect(() => {
     getProfile();
-  }, []);
+  }, [refresh]);
 
   async function getProfile() {
     // if (!session) return;
@@ -76,25 +77,21 @@ export default function SettingsScreen({ navigation }) {
     } finally {
       setLoading(false);
       setPorifleTag(username.replace(/ /g, ""));
-      window.location.reload();
     }
   }
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <ProfilePicture
         url={avatar_url}
-        size={"7rem"}
-        height={"7rem"}
-        width={"7rem"}
-        onUpload={(url) => {
-          setAvatarUrl(url);
-        }}
+        height={128}
+        width={128}
+        isReadOnly={false}
       />
-      <Text style={{ fontSize: "0.6rem" }}>@{profile_tag}</Text>
+      <Text style={{ fontSize: 14 }}>@{profile_tag}</Text>
       <View
         style={{
-          width: "22rem",
-          height: "5rem",
+          width: 356,
+          height: 80,
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
@@ -102,28 +99,31 @@ export default function SettingsScreen({ navigation }) {
           margin: 0,
         }}
       >
-        <label htmlFor="username">Name</label>
-        <input
+        <Text>Name</Text>
+        <TextInput
           style={{
-            height: "1.5rem",
+            height: 48,
             width: "90%",
-            margin: "0.5rem",
+            margin: 8,
             borderWidth: 1,
             padding: 10,
-            fontSize: "1rem",
-            borderRadius: "16px",
-            border: "1px solid gray",
+            fontSize: 16,
+            borderRadius: 16,
+            borderColor: "#841584",
+            borderStyle: "solid",
+            borderLeftWidth: 4,
+            borderRightWidth: 4,
           }}
           id="username"
           type="text"
           value={username || ""}
-          onChange={(e) => setUsername(e.target.value)}
+          onChangeText={(text) => setUsername(text)}
         />
       </View>
       <View
         style={{
-          width: "22rem",
-          height: "5rem",
+          width: 356,
+          height: 80,
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
@@ -131,28 +131,31 @@ export default function SettingsScreen({ navigation }) {
           margin: 0,
         }}
       >
-        <label htmlFor="website">Website</label>
-        <input
+        <Text>Website</Text>
+        <TextInput
           style={{
-            height: "1.5rem",
+            height: 48,
             width: "90%",
-            margin: "0.5rem",
+            margin: 8,
             borderWidth: 1,
             padding: 10,
-            fontSize: "1rem",
-            borderRadius: "16px",
-            border: "1px solid gray",
+            fontSize: 16,
+            borderRadius: 16,
+            borderColor: "#841584",
+            borderStyle: "solid",
+            borderLeftWidth: 4,
+            borderRightWidth: 4,
           }}
           id="website"
           type="website"
           value={website || ""}
-          onChange={(e) => setWebsite(e.target.value)}
+          onChangeText={(text) => setWebsite(text)}
         />
       </View>
       <View
         style={{
-          width: "22rem",
-          height: "5rem",
+          width: 356,
+          height: 80,
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
@@ -160,39 +163,45 @@ export default function SettingsScreen({ navigation }) {
           margin: 0,
         }}
       >
-        <label htmlFor="about_me">About me</label>
-        <div>
-          <textarea
+        <Text>About me</Text>
+        <View>
+          <TextInput
             style={{
-              height: "8rem",
-              width: "20rem",
-              margin: "0.5rem",
+              height: 128,
+              width: 320,
+              margin: 8,
               borderWidth: 1,
               padding: 10,
-              fontSize: "1rem",
-              borderRadius: "16px",
-              border: "1px solid gray",
+              fontSize: 16,
+              borderRadius: 16,
+              borderColor: "#841584",
+              borderStyle: "solid",
+              borderLeftWidth: 4,
+              borderRightWidth: 4,
             }}
+            multiline={true}
+            numberOfLines={5}
             id="about_me"
             type="text"
             value={about_me || ""}
-            onChange={(e) => setAboutMe(e.target.value)}
+            onChangeText={(text) => setAboutMe(text)}
           />
-        </div>
+        </View>
       </View>
       <View
         style={{
           flex: 1,
-          width: "20rem",
+          width: 320,
           justifyContent: "space-between",
           alignItems: "center",
           flexDirection: "row",
         }}
       >
         <Button
-          onPress={() =>
-            updateProfile({ username, website, avatar_url, about_me })
-          }
+          onPress={() => {
+            updateProfile({ username, website, avatar_url, about_me });
+            setRefresh(refresh + 1);
+          }}
           style={{ fontSize: 26, fontWeight: "bold", margin: 12 }}
           title="Update Profile!"
           color="#841584"
