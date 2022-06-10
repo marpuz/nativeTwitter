@@ -85,6 +85,9 @@ export default function SettingsScreen({ navigation }) {
         url={avatar_url}
         height={128}
         width={128}
+        onUpload={(url) => {
+          setAvatarUrl(url);
+        }}
         isReadOnly={false}
       />
       <Text style={{ fontSize: 14 }}>@{profile_tag}</Text>

@@ -146,12 +146,14 @@ export default function ProfileView({ route, navigation }) {
   }
   return (
     <ScrollView>
-      <ProfilePicture
-        url={avatar_url}
-        height={160}
-        width={160}
-        isReadOnly={true}
-      />
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <ProfilePicture
+          url={avatar_url}
+          height={160}
+          width={160}
+          isReadOnly={true}
+        />
+      </View>
       <Text style={{ textAlign: "center", fontSize: 16 }}>{username}</Text>
       <Text style={{ textAlign: "center", fontSize: 14 }}>
         @{route.params.profile.profiles.profile_tag}

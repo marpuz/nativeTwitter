@@ -16,9 +16,10 @@ const FollowersPanel = ({ follower }) => {
   return (
     <View
       style={{
-        alignItems: "flex-start",
         flexDirection: "row",
+        alignContent: "center",
         alignItems: "center",
+        justifyContent: "flex-start",
         margin: 8,
         borderRadius: 16,
         borderColor: "#841584",
@@ -29,17 +30,14 @@ const FollowersPanel = ({ follower }) => {
         flexShrink: 1,
       }}
     >
-      {/* <View>
-        <ProfilePicture
-          url={follower.avatar_url}
-          isReadOnly={true}
-          height={"40px"}
-          width={"40px"}
-        />
-      </View> */}
-      <View>
-        <Text style={{ marginLeft: 16 }}>{follower.username}</Text>
-      </View>
+      <ProfilePicture
+        url={follower.avatar_url}
+        isReadOnly={true}
+        height={40}
+        width={40}
+      />
+
+      <Text style={{ marginLeft: 16 }}>{follower.username}</Text>
     </View>
   );
 };
@@ -58,7 +56,7 @@ export default function FollowersScreen({ navigation }) {
   useEffect(async () => {
     await getFilteredProfiles();
   }, [searchProfiles]);
-  const updateSearch = (e) => setSearchProfiles(e?.target?.value);
+  const updateSearch = (e) => setSearchProfiles(e);
   const debouncedOnChange = debounce(updateSearch, 180);
 
   async function getFilteredProfiles() {
@@ -102,7 +100,7 @@ export default function FollowersScreen({ navigation }) {
             textAlign: "center",
             fontSize: 16,
             height: 32,
-            width: "40%",
+            width: "96%",
             margin: 8,
           }}
           id="search-input"
