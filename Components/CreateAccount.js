@@ -15,7 +15,7 @@ const CreateAccount = () => {
   const profile_tag = username;
 
   React.useEffect(() => {
-    if (user !== null)
+    if (user !== null) {
       updateProfile({
         user,
         username,
@@ -24,7 +24,25 @@ const CreateAccount = () => {
         about_me,
         profile_tag,
       });
+    }
   }, [user]);
+
+  async function follow(user) {
+    try {
+      const { data, error } = await supabase
+        .from("Followers")
+        .insert([{ followedBy: user.id, followedUser: user.id }]);
+
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 
   async function updateProfile({
     user,
@@ -53,6 +71,8 @@ const CreateAccount = () => {
       }
     } catch (error) {
       alert(error.message);
+    } finally {
+      follow(user);
     }
   }
 
