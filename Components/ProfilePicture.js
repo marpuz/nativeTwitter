@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { View, Image, Text, TouchableOpacity } from "react-native";
-import { Input } from "react-native-elements";
-import DocumentPicker from "react-native-document-picker";
+import * as ImagePicker from "expo-image-picker";
 
 export default function ProfilePicture({
   url,
@@ -12,9 +11,7 @@ export default function ProfilePicture({
   height,
   width,
 }) {
-  const [avatarUrl, setAvatarUrl] = useState("null");
-  const [uploading, setUploading] = useState(false);
-  const [singleFile, setSingleFile] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
     if (url) downloadImage(url);
@@ -39,62 +36,41 @@ export default function ProfilePicture({
     }
   }
 
-  async function uploadAvatar(file) {
-    try {
-      setUploading(true);
+  async function uploadAvatar(photo) {
+    if (!photo.cancelled) {
+      const ext = photo.uri.substring(photo.uri.lastIndexOf(".") + 1);
+      const fileName = `${Math.random() * 10000000}.${ext}`;
 
-      const newFile = file;
-      const fileExt = newFile.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      var formData = new FormData();
+      formData.append("files", {
+        uri: photo.uri,
+        name: fileName,
+        type: photo.type ? `image/${ext}` : `video/${ext}`,
+      });
 
-      let { error: uploadError } = await supabase.storage
+      const { data, error } = await supabase.storage
         .from("avatars")
-        .upload(filePath, newFile);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      onUpload(filePath);
-    } catch (error) {
-      alert(error.message);
-    } finally {
-      setUploading(false);
+        .upload(fileName, formData);
+      onUpload(fileName);
+      if (error) throw new Error(error.message);
+      return { ...photo, imageData: data };
+    } else {
+      return photo;
     }
   }
 
-  const selectFile = async () => {
-    // Opening Document Picker to select one file
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
     try {
-      const res = await DocumentPicker.pick({
-        // Provide which type of file you want user to pick
-        type: [DocumentPicker.types.allFiles],
-        // There can me more options as well
-        // DocumentPicker.types.allFiles
-        // DocumentPicker.types.images
-        // DocumentPicker.types.plainText
-        // DocumentPicker.types.audio
-        // DocumentPicker.types.pdf
-      });
-      // Printing the log realted to the file
-      console.log("res : " + JSON.stringify(res));
-      // Setting the state to show single file attributes
-      uploadAvatar(res);
-      // setSingleFile(res);
-    } catch (err) {
-      // setSingleFile(null);
-      // Handling any exception (If any)
-      if (DocumentPicker.isCancel(err)) {
-        // If user canceled the document selection
-        alert("Canceled");
-      } else {
-        // For Unknown Error
-        alert("Unknown Error: " + JSON.stringify(err));
-        throw err;
-      }
-    }
+      return await uploadAvatar(result);
+    } catch (e) {}
   };
+
   return (
     <View>
       {avatarUrl ? (
@@ -109,16 +85,7 @@ export default function ProfilePicture({
       <Text> </Text>
       {!isReadOnly ? (
         <View>
-          {/* <Input
-            type="file"
-            id="single"
-            accept="image/*"
-            onChange={uploadAvatar}
-            disabled={uploading}
-          >
-            Upload
-          </Input> */}
-          <TouchableOpacity activeOpacity={0.5} onPress={selectFile}>
+          <TouchableOpacity activeOpacity={0.5} onPress={pickImage}>
             <Text>Select File</Text>
           </TouchableOpacity>
         </View>

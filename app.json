@@ -1,11 +1,24 @@
 {
   "expo": {
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow TwitterClone to access your photos",
+          "cameraPermission" :"Allow $(PRODUCT_NAME) to access your camera"
+        }
+      ]
+    ],
     "name": "nativeTwitterClone",
     "slug": "nativeTwitterClone",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
-    ]
+
+    ],
+    "android": {
+      "package": "io.expo.client"
+    }
   },
   "name": "nativeTwitterClone"
 }

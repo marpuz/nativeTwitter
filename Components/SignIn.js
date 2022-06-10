@@ -4,7 +4,6 @@ import { supabase } from "../supabaseClient";
 import { AuthContext } from "./Context";
 
 export default function SignIn({ navigation }) {
-  const [loading, setLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const user = supabase.auth.user();
@@ -12,7 +11,6 @@ export default function SignIn({ navigation }) {
 
   const handleSignIn = async (email, password) => {
     try {
-      setLoading(true);
       let { user, error } = await supabase.auth.signIn({
         email: email,
         password: password,
@@ -22,9 +20,9 @@ export default function SignIn({ navigation }) {
     } catch (error) {
       alert(error.error_description || error.message);
     } finally {
-      setLoading(false);
       setPassword("");
       setEmail("");
+
       setSession(supabase.auth.session());
     }
   };

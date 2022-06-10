@@ -13,7 +13,6 @@ import { AuthContext } from "./Context";
 
 export default function HomeScreen({ navigation }) {
   const session = supabase.auth.session();
-  const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const user = supabase.auth.user();
   const [allPosts, setAllPosts] = useState(false);
@@ -32,7 +31,6 @@ export default function HomeScreen({ navigation }) {
   async function getAllPosts() {
     if (!session) return;
     try {
-      setLoading(true);
       const { data, error } = await supabase
         .from("posts")
         .select(`*, profiles:user_id (username, avatar_url, profile_tag)`);
@@ -48,15 +46,12 @@ export default function HomeScreen({ navigation }) {
       }
     } catch (error) {
       alert(error.message);
-    } finally {
-      setLoading(false);
     }
   }
 
   async function getFollowersPosts() {
     if (!session) return;
     try {
-      setLoading(true);
       const { data, error } = await supabase
         .from("Followers")
         .select(
@@ -77,14 +72,11 @@ export default function HomeScreen({ navigation }) {
       }
     } catch (error) {
       alert(error.message);
-    } finally {
-      setLoading(false);
     }
   }
 
   const handleAddPost = async (content) => {
     try {
-      setLoading(true);
       const { data, error } = await supabase
         .from("posts")
         .insert([{ content: content, user_id: user.id }]);
@@ -92,14 +84,12 @@ export default function HomeScreen({ navigation }) {
       if (error) throw error;
     } catch (error) {
       alert(error.error_description || error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <ScrollView>
-      <View style={{}}>
+      <View>
         <Button
           onPress={() => setAllPosts(!allPosts)}
           style={{ fontSize: 26, fontWeight: "bold", margin: 12 }}

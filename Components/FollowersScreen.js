@@ -44,9 +44,7 @@ const FollowersPanel = ({ follower }) => {
 
 export default function FollowersScreen({ navigation }) {
   const { followers, getFollowers } = React.useContext(AuthContext);
-  // const [followers, setFollowers] = useState(null);
   const [searchProfiles, setSearchProfiles] = useState("");
-  const [loading, setLoading] = useState(false);
   const [filteredProfiles, setFilteredProfiles] = useState([]);
 
   useEffect(() => {
@@ -61,7 +59,6 @@ export default function FollowersScreen({ navigation }) {
 
   async function getFilteredProfiles() {
     try {
-      setLoading(true);
       let { data, error, status } = await supabase
         .from("profiles")
         .select(`id, username, website, avatar_url, about_me, profile_tag`)
@@ -76,8 +73,6 @@ export default function FollowersScreen({ navigation }) {
       }
     } catch (error) {
       alert(error.message);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -117,7 +112,7 @@ export default function FollowersScreen({ navigation }) {
         >
           {filteredProfiles.length !== 0 &&
             filteredProfiles.map((filteredProfile, index) => (
-              <View
+              <TouchableOpacity
                 key={index}
                 onClick={() =>
                   navigation.navigate("ProfileView", {
@@ -126,7 +121,7 @@ export default function FollowersScreen({ navigation }) {
                 }
               >
                 <FollowersPanel follower={filteredProfile} />
-              </View>
+              </TouchableOpacity>
             ))}
         </View>
       </View>

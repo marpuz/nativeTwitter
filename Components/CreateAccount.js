@@ -4,11 +4,10 @@ import * as React from "react";
 import { AuthContext } from "./Context";
 
 const CreateAccount = () => {
-  const [loading, setLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [user, setUser] = React.useState(null);
-  const { session, setSession } = React.useContext(AuthContext);
+  const { setSession } = React.useContext(AuthContext);
   const username = Math.random() * 9999999999;
   const website = "www.example.com";
   const avatar_url = "0.8063897619680429.jpg";
@@ -35,8 +34,6 @@ const CreateAccount = () => {
     about_me,
   }) {
     try {
-      setLoading(true);
-
       const updates = {
         id: user.id,
         username,
@@ -56,8 +53,6 @@ const CreateAccount = () => {
       }
     } catch (error) {
       alert(error.message);
-    } finally {
-      setLoading(false);
     }
   }
 
