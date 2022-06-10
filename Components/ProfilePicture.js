@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+
 export default function ProfilePicture({
   url,
   size,
@@ -9,8 +11,7 @@ export default function ProfilePicture({
   height,
   width,
 }) {
-  const [avatarUrl, setAvatarUrl] = useState(null);
-  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
     if (url) downloadImage(url);
@@ -24,98 +25,72 @@ export default function ProfilePicture({
       if (error) {
         throw error;
       }
-      const url = URL.createObjectURL(data);
-      setAvatarUrl(url);
+      const fileReaderInstance = new FileReader();
+      fileReaderInstance.readAsDataURL(data);
+      fileReaderInstance.onload = () => {
+        base64data = fileReaderInstance.result;
+        setAvatarUrl(base64data);
+      };
     } catch (error) {
       console.log("Error downloading image: ", error.message);
     }
   }
 
-  async function uploadAvatar(event) {
-    if (isReadOnly) return;
-    try {
-      setUploading(true);
+  async function uploadAvatar(photo) {
+    if (!photo.cancelled) {
+      const ext = photo.uri.substring(photo.uri.lastIndexOf(".") + 1);
+      const fileName = `${Math.random() * 10000000}.${ext}`;
 
-      if (!event.target.files || event.target.files.length === 0) {
-        throw new Error("You must select an image to upload.");
-      }
+      var formData = new FormData();
+      formData.append("files", {
+        uri: photo.uri,
+        name: fileName,
+        type: photo.type ? `image/${ext}` : `video/${ext}`,
+      });
 
-      const file = event.target.files[0];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      let { error: uploadError } = await supabase.storage
+      const { data, error } = await supabase.storage
         .from("avatars")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      onUpload(filePath);
-    } catch (error) {
-      alert(error.message);
-    } finally {
-      setUploading(false);
+        .upload(fileName, formData);
+      onUpload(fileName);
+      if (error) throw new Error(error.message);
+      return { ...photo, imageData: data };
+    } else {
+      return photo;
     }
   }
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    try {
+      return await uploadAvatar(result);
+    } catch (e) {}
+  };
+
   return (
-    <View
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Image
-        source={
-          avatarUrl ? avatarUrl : process.env.PUBLIC_URL + "/default-avatar.jpg"
-        }
-        alt="Avatar"
-        style={{
-          display: "inline-block",
-          borderRadius: "50%",
-          border: "1px",
-          width: width,
-          height: height,
-        }}
-      />
-      {!isReadOnly && (
-        <View style={{ width: size }}>
-          <label
-            className="upload-btn text-white display: flex justify-center items-center text-sm rounded-lg border-[2px] border-white mt-3 p-[4px] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
-            htmlFor="single"
-          >
-            <b>
-              {uploading ? (
-                "Uploading ..."
-              ) : (
-                <Text
-                  style={{
-                    flex: 1,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  Upload
-                </Text>
-              )}
-            </b>
-          </label>
-          <input
-            style={{
-              visibility: "hidden",
-              position: "absolute",
-            }}
-            type="file"
-            id="single"
-            accept="image/*"
-            onChange={uploadAvatar}
-            disabled={uploading}
-          />
+    <View>
+      {avatarUrl ? (
+        <Image
+          source={{ uri: avatarUrl }}
+          alt="Avatar"
+          style={{ width: width, height: height }}
+        />
+      ) : (
+        <View />
+      )}
+      <Text> </Text>
+      {!isReadOnly ? (
+        <View>
+          <TouchableOpacity activeOpacity={0.5} onPress={pickImage}>
+            <Text>Select File</Text>
+          </TouchableOpacity>
         </View>
+      ) : (
+        <View></View>
       )}
     </View>
   );

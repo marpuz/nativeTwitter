@@ -91,7 +91,7 @@ export default function ProfileView({ route, navigation }) {
       }
 
       if (data) {
-        setPosts(data.sort((a, b) => a - b));
+        setPosts(data.sort((a, b) => b.post_id - a.post_id));
       }
     } catch (error) {
       alert(error.message);
@@ -140,27 +140,20 @@ export default function ProfileView({ route, navigation }) {
   }
   return (
     <ScrollView>
-      <ProfilePicture
-        url={avatar_url}
-        height={"10rem"}
-        width={"10rem"}
-        isReadOnly={true}
-      />
-      <Text style={{ textAlign: "center" }}>
-        <span style={{ fontSize: "1rem" }}>{username}</span>
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <ProfilePicture
+          url={avatar_url}
+          height={160}
+          width={160}
+          isReadOnly={true}
+        />
+      </View>
+      <Text style={{ textAlign: "center", fontSize: 16 }}>{username}</Text>
+      <Text style={{ textAlign: "center", fontSize: 14 }}>
+        @{route.params.profiles.profile_tag}
       </Text>
-      <Text style={{ textAlign: "center" }}>
-        <span style={{ fontSize: "0.8rem" }}>
-          {" "}
-          @{route.params.profiles.profile_tag}
-        </span>
-      </Text>
-      <Text style={{ textAlign: "center" }}>
-        <span style={{ fontSize: "1rem" }}>{website}</span>
-      </Text>
-      <Text style={{ textAlign: "center" }}>
-        <span style={{ fontSize: "1rem" }}>{about_me}</span>
-      </Text>
+      <Text style={{ textAlign: "center", fontSize: 16 }}>{website}</Text>
+      <Text style={{ textAlign: "center", fontSize: 16 }}>{about_me}</Text>
       {!usersProfile ? (
         !followers ? (
           <Button
@@ -184,9 +177,9 @@ export default function ProfileView({ route, navigation }) {
       )}
       {posts &&
         posts.map((post, index) => (
-          <div key={index} style={{ width: "100vw", display: "block" }}>
+          <View key={index} style={{ width: "100%" }}>
             <Post post={post} key={index} />
-          </div>
+          </View>
         ))}
     </ScrollView>
   );

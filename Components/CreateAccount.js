@@ -4,11 +4,10 @@ import * as React from "react";
 import { AuthContext } from "./Context";
 
 const CreateAccount = () => {
-  const [loading, setLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [user, setUser] = React.useState(null);
-  const { session, setSession } = React.useContext(AuthContext);
+  const { setSession } = React.useContext(AuthContext);
   const username = Math.random() * 9999999999;
   const website = "www.example.com";
   const avatar_url = "0.8063897619680429.jpg";
@@ -16,7 +15,7 @@ const CreateAccount = () => {
   const profile_tag = username;
 
   React.useEffect(() => {
-    if (user !== null)
+    if (user !== null) {
       updateProfile({
         user,
         username,
@@ -25,7 +24,25 @@ const CreateAccount = () => {
         about_me,
         profile_tag,
       });
+    }
   }, [user]);
+
+  async function follow(user) {
+    try {
+      const { data, error } = await supabase
+        .from("Followers")
+        .insert([{ followedBy: user.id, followedUser: user.id }]);
+
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 
   async function updateProfile({
     user,
@@ -35,8 +52,6 @@ const CreateAccount = () => {
     about_me,
   }) {
     try {
-      setLoading(true);
-
       const updates = {
         id: user.id,
         username,
@@ -57,7 +72,7 @@ const CreateAccount = () => {
     } catch (error) {
       alert(error.message);
     } finally {
-      setLoading(false);
+      follow(user);
     }
   }
 
@@ -78,17 +93,20 @@ const CreateAccount = () => {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={{ fontSize: "3rem" }}>Sign up</Text>
+      <Text style={{ fontSize: 48 }}>Sign up</Text>
       <TextInput
         style={{
-          border: "1px solid gray",
-          padding: "0.5rem",
-          borderRadius: "16px",
+          borderColor: "#841584",
+          borderStyle: "solid",
+          borderLeftWidth: 4,
+          borderRightWidth: 4,
+          padding: 8,
+          borderRadius: 16,
           textAlign: "center",
-          fontSize: "1rem",
-          height: "2rem",
+          fontSize: 16,
+          height: 32,
           width: "40%",
-          margin: "0.5rem",
+          margin: 8,
         }}
         autoCorrect={false}
         autoCapitalize="none"
@@ -100,14 +118,17 @@ const CreateAccount = () => {
 
       <TextInput
         style={{
-          border: "1px solid gray",
-          padding: "0.5rem",
-          borderRadius: "16px",
+          borderColor: "#841584",
+          borderStyle: "solid",
+          borderLeftWidth: 4,
+          borderRightWidth: 4,
+          padding: 8,
+          borderRadius: 16,
           textAlign: "center",
-          fontSize: "1rem",
-          height: "2rem",
+          fontSize: 16,
+          height: 32,
           width: "40%",
-          margin: "0.5rem",
+          margin: 8,
         }}
         autoCorrect={false}
         autoCapitalize="none"

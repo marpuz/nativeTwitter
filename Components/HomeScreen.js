@@ -1,22 +1,28 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { View, Text, ScrollView, Button } from "react-native";
+import {
+  View,
+  TextInput,
+  ScrollView,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 import Post from "./Post";
 import { supabase } from "../supabaseClient";
 import { AuthContext } from "./Context";
 
 export default function HomeScreen({ navigation }) {
   const session = supabase.auth.session();
-  const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const user = supabase.auth.user();
   const [allPosts, setAllPosts] = useState(false);
   const [postContent, setPostContent] = useState("");
+  const [refresh, setRefresh] = useState(0);
   const { followers } = React.useContext(AuthContext);
 
   useEffect(() => {
     getPosts(allPosts);
-  }, [session, allPosts, followers]);
+  }, [session, allPosts, followers, refresh]);
 
   async function getPosts(allPosts) {
     allPosts ? getAllPosts() : getFollowersPosts();
@@ -25,7 +31,6 @@ export default function HomeScreen({ navigation }) {
   async function getAllPosts() {
     if (!session) return;
     try {
-      setLoading(true);
       const { data, error } = await supabase
         .from("posts")
         .select(`*, profiles:user_id (username, avatar_url, profile_tag)`);
@@ -41,15 +46,12 @@ export default function HomeScreen({ navigation }) {
       }
     } catch (error) {
       alert(error.message);
-    } finally {
-      setLoading(false);
     }
   }
 
   async function getFollowersPosts() {
     if (!session) return;
     try {
-      setLoading(true);
       const { data, error } = await supabase
         .from("Followers")
         .select(
@@ -70,30 +72,24 @@ export default function HomeScreen({ navigation }) {
       }
     } catch (error) {
       alert(error.message);
-    } finally {
-      setLoading(false);
     }
   }
 
   const handleAddPost = async (content) => {
     try {
-      setLoading(true);
       const { data, error } = await supabase
         .from("posts")
         .insert([{ content: content, user_id: user.id }]);
-      window.location.reload();
+      setPostContent("");
       if (error) throw error;
     } catch (error) {
       alert(error.error_description || error.message);
-    } finally {
-      setLoading(false);
-      setPostContent("");
     }
   };
 
   return (
     <ScrollView>
-      <View style={{}}>
+      <View>
         <Button
           onPress={() => setAllPosts(!allPosts)}
           style={{ fontSize: 26, fontWeight: "bold", margin: 12 }}
@@ -105,24 +101,34 @@ export default function HomeScreen({ navigation }) {
           color="#841584"
           margin="12px"
         />
-        <View>
-          <input
+        <View style={{ width: "100%" }}>
+          <TextInput
             style={{
-              height: "1.5rem",
-              width: "90%",
-              margin: "0.5rem",
+              height: 64,
+              width: "96%",
+              margin: 8,
               borderWidth: 1,
               padding: 10,
-              fontSize: "1rem",
-              borderRadius: "16px",
-              border: "1px solid gray",
+              fontSize: 16,
+              borderRadius: 16,
+              borderColor: "#841584",
+              borderStyle: "solid",
+              borderLeftWidth: 4,
+              borderRightWidth: 4,
             }}
+            autoCorrect={false}
+            autoCapitalize="none"
+            keyboardType="email-address"
             placeholder={"Write your post!"}
-            onChange={(e) => setPostContent(e.target.value)}
+            value={postContent || ""}
+            onChangeText={(e) => setPostContent(e)}
           />
           <Button
-            onPress={() => handleAddPost(postContent)}
-            style={{ fontSize: "1rem", fontWeight: "bold", margin: 12 }}
+            onPress={() => {
+              handleAddPost(postContent);
+              setRefresh(refresh + 1);
+            }}
+            style={{ fontSize: 16, fontWeight: "bold", margin: 12 }}
             title={"POST!"}
             color="#841584"
             width="48px"
@@ -132,15 +138,15 @@ export default function HomeScreen({ navigation }) {
       </View>
       {posts &&
         posts.map((post, index) => (
-          <div
-            key={index}
-            onClick={() =>
-              navigation.navigate("ProfileView", { profile: post })
-            }
-            style={{ width: "100vw", display: "block" }}
-          >
-            <Post post={post} key={index} />
-          </div>
+          <View key={index} style={{ width: "100%" }}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("ProfileView", { profile: post })
+              }
+            >
+              <Post post={post} key={index} />
+            </TouchableOpacity>
+          </View>
         ))}
     </ScrollView>
   );
